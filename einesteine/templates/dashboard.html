@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Eine Steine</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Baloo+2&amp;display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter&amp;display=swap">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/fonts/font-awesome.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/colors.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/custom.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/styles.css') }}">
+</head>
+
+<body style="background-color: var(--as-color);font-family: Inter, sans-serif;">
+    <div class="container d-flex flex-column" style="margin-top: 2%;">
+        <div class="d-flex align-items-center flex-wrap dashboard-card" style="margin: 8px 0px 16px 0px;">
+            <div class="d-flex align-items-center dashboard-maintag">
+              <a class="d-lg-flex align-items-center" href="{{ url_for('profile') }}" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;">{{ user.username }}</a>
+              <i class="fa fa-user d-lg-flex dashboard-maintag-ico"></i>
+            </div>
+            <div class="d-flex align-items-center dashboard-maintag" herf="#">
+              <a class="d-lg-flex align-items-center" href="#" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;">Законченые</a>
+              <i class="fa fa-check d-lg-flex dashboard-maintag-ico">
+              </i>
+            </div>
+            <div class="d-flex align-items-center dashboard-maintag">
+              <a class="d-lg-flex align-items-center" href="#" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;">Законченные частично</a>
+              <i class="fa fa-clock-o d-lg-flex dashboard-maintag-ico"></i>
+            </div>
+            <div class="d-flex align-items-center dashboard-maintag">
+              <a class="d-lg-flex align-items-center" href="#" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;">Не законченые</a>
+              <i class="fa fa-close d-lg-flex dashboard-maintag-ico"></i>
+            </div>
+        </div>
+        <div class="d-flex align-items-center flex-wrap dashboard-card" style="margin: 0px 0px 16px 0px;">
+          <a class="dashboard-tag" href="#">Биология</a><a class="dashboard-tag" href="#">Физика</a>
+          <a class="dashboard-tag" href="#">Математика</a>
+          <a class="dashboard-tag" href="#">Языки</a>
+          <a class="dashboard-tag" href="#">Ракетостроение</a>
+          <a class="dashboard-tag" href="#">Геймдев</a>
+          <a class="dashboard-tag" href="#">История</a>
+        </div>
+    </div>
+    {% for idea in ideas %}
+    <div class="container d-flex justify-content-evenly flex-wrap">
+        <div class="d-flex flex-column flex-wrap dashboard-card" style="margin: 12px;max-width: 325px;"><a class="dashboard-card-link" href="#">{{ idea.name }}<br></a>
+            <div class="d-flex align-items-center" style="font-size: 12px;">
+              <span>Идея №{{ idea.number }}</span>
+              <i class="fa fa-check" style="margin-right: 6px;"></i>
+              <span style="margin-right: 2px;">{{ len(idea.posts) }}</span>
+              <i class="fa fa-pencil-square-o d-lg-flex" style="margin-right: 6px;"></i>
+              <span>{{ idea.created_time.strftime('%Y%d%m') }}</span></div>
+            <div class="d-flex flex-wrap" style="font-size: 12px;">
+              <span class="d-flex" style="margin-right: 8px;">Языки<br></span>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    <script src="{{ url_for('static', filename = 'bootstrap/js/bootstrap.min.js')}}"></script>
+</body>
+
+</html>
