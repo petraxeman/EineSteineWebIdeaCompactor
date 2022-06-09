@@ -1,0 +1,75 @@
+.form-card {
+  box-shadow: 0px 5px 15px var(--ad-color);
+}
+
+.form-item {
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+.form-button {
+  background-color: var(--b-color);
+  padding: 6px 12px;
+  border-radius: 1rem;
+}
+
+.form-button:active {
+  background-color: var(--bd-color);
+}
+
+.dashboard-card {
+  background-color: var(--a-color);
+  padding: 16px;
+  border-radius: 1rem;
+  box-shadow: 0px 5px 15px var(--ad-color);
+}
+
+.dashboard-card-link {
+  font-size: 18px;
+  text-decoration: none;
+  color: var(--bd-color);
+}
+
+.dashboard-card-link:hover, .dashboard-card-link:active {
+  color: var(--b-color);
+}
+
+.dashboard-tag {
+  text-decoration: underline;
+  font-size: 14px;
+  color: black;
+  margin: 8px;
+}
+
+.dashboard-maintag {
+  text-decoration: underline;
+  font-size: 14px;
+  color: white;
+  margin: 8px;
+  padding: 8px;
+  border: 1px solid black;
+  border-radius: 1rem;
+  background-color: var(--cd-color);
+}
+
+.dashboard-maintag-ico {
+  font-size: 16px;
+}
+
+.dashboard-maintag:hover, .dashboard-maintag:active {
+  color: var(--c-color);
+}
+
+.dashboard-tag:hover, .dashboard-tag:active {
+  color: var(--c-color);
+}
+
+.editor-head {
+  background-color: var(--a-color);
+  box-shadow: 0px 5px 15px var(--ad-color);
+}
+
+.modeal-content {
+  border-radius: 2rem;
+}
+

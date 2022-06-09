@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from einesteine import app, db
-from flask import render_template, redirect, url_for, flash, request
+from flask import render_template, redirect, url_for, flash, request, jsonify
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 import einesteine.forms as forms
-from einesteine.models import User
+from einesteine.models import User, Tag
 from datetime import datetime
 
 
@@ -14,6 +14,21 @@ from datetime import datetime
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+@app.route('/add_tag/<tag_name>', methods=['POST'])
+def add_tag(tag_name):
+    tag = Tag(name=tag_name, user_id=current_user.id)
+    db.session.add(tag)
+    db.session.commit()
+    return jsonify({'status' : '200', 'tag_name' : tag_name, 'tag_id' : tag.id})
+
+@app.route('/del_tag/<tag_id>', methods=['POST'])
+def del_tag(tag_id):
+    tag = Tag.query.get(tag_id)
+    if tag.user_id == current_user.id:
+        db.session.delete(tag)
+        db.session.commit()
+    return '200'
 
 @app.route('/')
 @app.route('/index')
@@ -42,6 +57,7 @@ def register():
     if form.validate_on_submit():
         user = User(username=form.username.data, email=form.email.data, register_time=datetime.now())
         user.set_password(form.password.data)
+
         db.session.add(user)
         db.session.commit()
         flash('Congratulations, you are now a registered user!')
@@ -51,9 +67,9 @@ def register():
 @app.route('/board')
 @login_required
 def dashboard():
-    return render_template('dashboard.html', user=current_user, ideas=current_user.ideas)
+    return render_template('dashboard.html', user=current_user, ideas=current_user.ideas, tags=current_user.tags.all())
 
 @app.route('/profile')
 @login_required
 def profile():
-    return render_template('dashboard.html')
+    return render_template('account.html', user=current_user)

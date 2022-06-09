@@ -16,7 +16,7 @@ class User(db.Model, UserMixin):
     register_time = db.Column(db.DateTime)
     ideas = db.relationship('Idea', backref='idea_author', lazy='dynamic')
     posts = db.relationship('Post', backref='post_author', lazy='dynamic')
-
+    tags = db.relationship('Tag', backref='tag_author', lazy='dynamic')
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
@@ -35,18 +35,29 @@ class Idea(db.Model):
     complete = db.Column(db.Boolean())
     created_time = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    tag_id = db.Column(db.Integer, db.ForeignKey('tag.id'))
     posts = db.relationship('Post', backref='idea_post', lazy='dynamic')
 
     def __repr__(self):
-        return f'<Post {self.name}>'
+        return f'<Idea {self.name}>'
 
 
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    body = db.Column(db.String(1000))
+    body = db.Column(db.String(3000))
     idea_id = db.Column(db.Integer, db.ForeignKey('idea.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):
         return f'<Post {self.body}>'
+
+
+class Tag(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(140))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    ideas = db.relationship('Idea', backref='tag_idea', lazy='dynamic')
+
+    def __repr__(self):
+        return f'<Tag {self.name}>'
