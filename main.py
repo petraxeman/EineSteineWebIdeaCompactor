@@ -1,3 +1,3 @@
 from einesteine import app
 
-app.run()
+app.run(debug = False)
