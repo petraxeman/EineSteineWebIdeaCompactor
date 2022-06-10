@@ -104,13 +104,13 @@
           {% endif %}
         </div>
     </div>
-    {% for idea in ideas %}
     <div class="container d-flex justify-content-evenly flex-wrap">
+      {% for idea in ideas %}
         <div class="d-flex flex-column flex-wrap dashboard-card" style="margin: 12px;max-width: 325px;">
           <a class="dashboard-card-link" href="{{ url_for('editor', idea_id = idea.id)}}">{{ idea.name }}<br></a>
             <div class="d-flex align-items-center" style="font-size: 12px;">
               <span>Идея №{{ idea.id }}</span>
-              {% if idea.complete %}
+              {% if idea.complete == True %}
               <i class="fa fa-check" style="margin-right: 6px;"></i>
               {% else %}
               <i class="fa fa-times" style="margin-right: 6px;"></i>
@@ -124,8 +124,8 @@
               </div>
               {% endfor %}
         </div>
+        {% endfor %}
     </div>
-    {% endfor %}
     <script src="{{ url_for('static', filename = 'bootstrap/js/bootstrap.min.js')}}"></script>
     <script>
       function delete_tag(tag_id, element_id) {

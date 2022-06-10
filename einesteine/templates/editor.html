@@ -20,7 +20,7 @@
             <div style="margin: 8px 0px;">
               <input id = "idea_name" type="text" value="{{ idea.name }}" style="border-radius: .5rem;width: 100%;"></div>
             <div style="margin: 8px 0px;">
-              <span style="margin-right: 16px;">Идея №1</span>
+              <span style="margin-right: 16px;">Идея №{{ idea.id }}</span>
               <span>{{ idea.created_time.strftime('%d.%m.%Y %H:%M')}}<br></span>
             </div>
             <div style="margin: 8px 0px;">
@@ -68,7 +68,12 @@
             <textarea id = "text"></textarea>
             <div class="d-flex align-items-center" style="margin-top: 8px;">
               <button class="form-button" type="button" style="margin-right: 16px;" onclick = "send_update()">Отправить</button>
-              <input id = 'completed' type="checkbox"><span>Завершена</span>
+              {% if idea.complete %}
+                <input id = 'completed' type="checkbox" checked>
+              {% else %}
+                <input id = 'completed' type="checkbox">
+              {% endif %}
+              <span>Завершена</span>
             </div>
         </div>
     </div>

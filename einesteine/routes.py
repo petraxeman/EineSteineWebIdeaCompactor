@@ -69,14 +69,15 @@ def delete_post(post_id):
 @login_required
 def update_idea():
     data = request.get_json()[0]
+    print(data)
     idea = Idea.query.get(data['idea_id'])
     if idea.user_id == current_user.id:
         idea.name = data['name']
         if data['text'] != '':
             post = Post(body = data['text'], created_time = datetime.strptime(data['date'], '%d.%m.%Y %H:%M'), user_id=current_user.id, idea_id=idea.id)
             db.session.add(post)
-        if data['completed']:
-            idea.completed = True
+        if data['completed'] in [True, False]:
+            idea.complete = data['completed']
         db.session.commit()
     return jsonify({'status' : '200'})
 
@@ -117,15 +118,15 @@ def register():
 @app.route('/board')
 @login_required
 def dashboard():
-    #idea = Idea(name = 'ASD', created_time = datetime.now(), user_id = 2, complete = False, number = 0)
-    #db.session.add(idea)
-    #db.session.commit()
     return render_template('dashboard.html', user=current_user, ideas=current_user.ideas, tags=current_user.tags.all())
 
 @app.route('/editor')
 @login_required
 def editor_empty():
-    return ''
+    idea = Idea(name = 'Моя шикарная идея', created_time = datetime.now(), user_id = current_user.id, complete = False, number = 0)
+    db.session.add(idea)
+    db.session.commit()
+    return redirect(url_for('editor', idea_id = idea.id))
 
 @app.route('/editor/<idea_id>')
 @login_required
