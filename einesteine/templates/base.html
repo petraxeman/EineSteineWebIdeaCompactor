@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>EineSteine - Idea assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Baloo+2&amp;display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter&amp;display=swap">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/fonts/font-awesome.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/colors.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/custom.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/styles.css') }}">
+</head>
+
+<body style="background-color: var(--as-color);font-family: Inter, sans-serif;">
+<div class="container d-flex justify-content-center" style="margin-top: 2%;margin-bottom: 20px;">
+    <div class="dashboard-card"><a href="{{ url_for('dashboard') }}" style="font-size: 24px;color: black;text-decoration: none;">EineSteine</a></div>
+</div>
+{% block content %}{% endblock %}
+<script src="{{ url_for('static', filename = 'bootstrap/js/bootstrap.min.js')}}"></script>
+</body>
+</html>

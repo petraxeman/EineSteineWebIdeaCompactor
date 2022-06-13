@@ -1,210 +1,191 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>Eine Steine</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Baloo+2&amp;display=swap">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter&amp;display=swap">
-    <link rel="stylesheet" href="{{ url_for('static', filename='/fonts/font-awesome.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='/css/colors.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='/css/custom.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='/css/styles.css') }}">
-</head>
-
-<body style="background-color: var(--as-color);font-family: Inter, sans-serif;">
-    <div class="container d-flex flex-column" style="margin-top: 2%;">
-        <div class="d-flex align-items-center flex-wrap dashboard-card" style="margin: 8px 0px 16px 0px;">
-            <div class="d-flex align-items-center dashboard-maintag">
-              <a class="d-lg-flex align-items-center" href="{{ url_for('profile') }}" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;">{{ user.username }}</a>
-              <i class="fa fa-user d-lg-flex dashboard-maintag-ico"></i>
-            </div>
-            <div class="d-flex align-items-center dashboard-maintag" herf="#">
-              <a class="d-lg-flex align-items-center" href="{{ url_for('editor_empty') }}" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;">Создать идею</a>
-              <i class="fa fa-pencil d-lg-flex dashboard-maintag-ico">
-              </i>
-            </div>
-            <div class="d-flex align-items-center dashboard-maintag">
-              <a class="d-lg-flex align-items-center" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;" data-bs-toggle="modal" data-bs-target="#add-tag-modal" type="button">Добавить тег</a>
-              <i class="fa fa-tag d-lg-flex dashboard-maintag-ico"></i>
-            </div>
-            <div class="d-flex align-items-center dashboard-maintag">
-              <a class="d-lg-flex align-items-center" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;" data-bs-toggle="modal" data-bs-target="#del-tag-modal" type="button">Удалить тег</a>
-              <i class="fa fa-tag d-lg-flex dashboard-maintag-ico"></i>
-            </div>
-            <div class="d-flex align-items-center dashboard-maintag" herf="#">
-              <a class="d-lg-flex align-items-center" href="#" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;">Закрытые</a>
-              <i class="fa fa-check d-lg-flex dashboard-maintag-ico">
-              </i>
-            </div>
-            <div class="d-flex align-items-center dashboard-maintag">
-              <a class="d-lg-flex align-items-center" href="#" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;">Частично</a>
-              <i class="fa fa-clock-o d-lg-flex dashboard-maintag-ico"></i>
-            </div>
-            <div class="d-flex align-items-center dashboard-maintag">
-              <a class="d-lg-flex align-items-center" href="#" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;">Не закрытые</a>
-              <i class="fa fa-close d-lg-flex dashboard-maintag-ico"></i>
-            </div>
-            <div class="modal fade" role="dialog" tabindex="-1" id="add-tag-modal">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content" style="border-radius: 2rem;background-color: var(--a-color);box-shadow: 0px 5px 15px var(--ad-color);">
-                        <div class="modal-header">
-                            <h4 class="modal-title">Добавить тег</h4>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                          <input id = 'tag-name-input' type="text" placeholder="Название тега">
-                        </div>
-                        <div class="modal-footer">
-                          <button class="form-button" type="button" data-bs-toggle="modal" data-bs-target="#add-tag-modal" onclick="add_tag()">Добавить</button>
-                        </div>
+{% extends "base.html" %}
+{% block content %}
+<div class="container d-flex flex-column" style="margin-top: 2%;">
+    <div class="d-flex align-items-center flex-wrap dashboard-card" style="margin: 8px 0px 16px 0px;">
+        <div class="d-flex align-items-center dashboard-maintag">
+          <a class="d-lg-flex align-items-center" href="{{ url_for('profile') }}" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;">{{ user.username }}</a>
+          <i class="fa fa-user d-lg-flex dashboard-maintag-ico"></i>
+        </div>
+        <div class="d-flex align-items-center dashboard-maintag" herf="#">
+          <a class="d-lg-flex align-items-center" href="{{ url_for('editor_empty') }}" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;">Создать идею</a>
+          <i class="fa fa-pencil d-lg-flex dashboard-maintag-ico">
+          </i>
+        </div>
+        <div class="d-flex align-items-center dashboard-maintag">
+          <a class="d-lg-flex align-items-center" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;" data-bs-toggle="modal" data-bs-target="#add-tag-modal" type="button">Добавить тег</a>
+          <i class="fa fa-tag d-lg-flex dashboard-maintag-ico"></i>
+        </div>
+        <div class="d-flex align-items-center dashboard-maintag">
+          <a class="d-lg-flex align-items-center" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;" data-bs-toggle="modal" data-bs-target="#del-tag-modal" type="button">Удалить тег</a>
+          <i class="fa fa-tag d-lg-flex dashboard-maintag-ico"></i>
+        </div>
+        <div class="d-flex align-items-center dashboard-maintag" herf="#">
+          <a class="d-lg-flex align-items-center" href="{{ url_for('dashboard_filtered_by_complete', stage = '3') }}" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;">Закрытые</a>
+          <i class="fa fa-check d-lg-flex dashboard-maintag-ico">
+          </i>
+        </div>
+        <div class="d-flex align-items-center dashboard-maintag">
+          <a class="d-lg-flex align-items-center" href="{{ url_for('dashboard_filtered_by_complete', stage = '2') }}" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;">Частично</a>
+          <i class="fa fa-clock-o d-lg-flex dashboard-maintag-ico"></i>
+        </div>
+        <div class="d-flex align-items-center dashboard-maintag">
+          <a class="d-lg-flex align-items-center" href="{{ url_for('dashboard_filtered_by_complete', stage = '1') }}" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;">Не закрытые</a>
+          <i class="fa fa-close d-lg-flex dashboard-maintag-ico"></i>
+        </div>
+        <div class="modal fade" role="dialog" tabindex="-1" id="add-tag-modal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content" style="border-radius: 2rem;background-color: var(--a-color);box-shadow: 0px 5px 15px var(--ad-color);">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Добавить тег</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                </div>
-            </div>
-            <div class="modal fade" role="dialog" tabindex="-1" id="del-tag-modal">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content" style="border-radius: 2rem;background-color: var(--a-color);box-shadow: 0px 5px 15px var(--ad-color);">
-                        <div class="modal-header">
-                            <h4 class="modal-title">Удалить тег</h4>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div id = 'del-tag-list' class="modal-body">
-                              {% if tags|length > 0 %}
-                              {% for tag in tags %}
-                                <div id='tag_{{ tag.id }}_in_del' class="d-flex flex-row align-items-center" style="margin: 8px;">
-                                  <div>
-                                    <span style="margin-right: 8px;">{{ tag.name }}</span>
-                                    <span>{{ tag.ideas.all()|length }}</span>
-                                    <i class="fa fa-edit" style="margin-right: 16px;font-size: inherit;"></i>
-                                  </div>
-                                  <div class="d-flex flex-fill justify-content-end">
-                                    <button class="form-button" type="button" onclick = "delete_tag('{{ tag.id }}', 'tag_{{ tag.id }}')"><i class="fa fa-remove"></i></button>
-                                  </div>
-                                </div>
-                              {% endfor %}
-                              {% else %}
-                                <span class="dashboard-tag" id="del-has-no-tags">У вас нет еще ни одного тега!</span>
-                              {% endif %}
-
-                        </div>
-                        <div class="modal-footer"></div>
+                    <div class="modal-body">
+                      <input id = 'tag-name-input' type="text" placeholder="Название тега">
+                    </div>
+                    <div class="modal-footer">
+                      <button class="form-button" type="button" data-bs-toggle="modal" data-bs-target="#add-tag-modal" onclick="add_tag()">Добавить</button>
                     </div>
                 </div>
             </div>
         </div>
-        <div id = 'tag-list' class="d-flex align-items-center flex-wrap dashboard-card" style="margin: 0px 0px 16px 0px;">
-          {% if tags|length > 0 %}
-          {% for tag in tags %}
-            <a id='tag_{{ tag.id }}_show' class="dashboard-tag" href="#"> {{ tag.name }}</a>
-          {% endfor %}
+        <div class="modal fade" role="dialog" tabindex="-1" id="del-tag-modal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content" style="border-radius: 2rem;background-color: var(--a-color);box-shadow: 0px 5px 15px var(--ad-color);">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Удалить тег</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div id = 'del-tag-list' class="modal-body">
+                          {% if tags|length > 0 %}
+                          {% for tag in tags %}
+                            <div id='tag_{{ tag.id }}_in_del' class="d-flex flex-row align-items-center" style="margin: 8px;">
+                              <div>
+                                <span style="margin-right: 8px;">{{ tag.name }}</span>
+                                <span>{{ tag.ideas.all()|length }}</span>
+                                <i class="fa fa-edit" style="margin-right: 16px;font-size: inherit;"></i>
+                              </div>
+                              <div class="d-flex flex-fill justify-content-end">
+                                <button class="form-button" type="button" onclick = "delete_tag('{{ tag.id }}', 'tag_{{ tag.id }}')"><i class="fa fa-remove"></i></button>
+                              </div>
+                            </div>
+                          {% endfor %}
+                          {% else %}
+                            <span class="dashboard-tag" id="del-has-no-tags">У вас нет еще ни одного тега!</span>
+                          {% endif %}
+
+                    </div>
+                    <div class="modal-footer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id = 'tag-list' class="d-flex align-items-center flex-wrap dashboard-card" style="margin: 0px 0px 16px 0px;">
+      {% if tags|length > 0 %}
+      {% for tag in tags %}
+        <a id='tag_{{ tag.id }}_show' class="dashboard-tag" href="{{ url_for('dashboard_filtered_by_tag', tag_name = tag.name) }}"> {{ tag.name }}</a>
+      {% endfor %}
+      {% else %}
+        <span id = 'has-no-tags' class="dashboard-tag" >У вас нет еще ни одного тега!</span>
+      {% endif %}
+    </div>
+</div>
+<div class="container d-flex justify-content-evenly flex-wrap">
+  {% for idea in ideas %}
+    <div class="d-flex flex-column flex-wrap dashboard-card" style="margin: 12px;max-width: 325px;">
+      <a class="dashboard-card-link" href="{{ url_for('editor', idea_id = idea.id)}}">{{ idea.name }}<br></a>
+        <div class="d-flex align-items-center" style="font-size: 12px;">
+          <span>Идея №{{ idea.id }}</span>
+          {% if idea.complete == True %}
+          <i class="fa fa-check" style="margin-right: 6px;"></i>
           {% else %}
-            <span id = 'has-no-tags' class="dashboard-tag" >У вас нет еще ни одного тега!</span>
+          <i class="fa fa-times" style="margin-right: 6px;"></i>
           {% endif %}
-        </div>
+          <span style="margin-right: 2px;">{{ idea.posts.all()|length }}</span>
+          <i class="fa fa-pencil-square-o d-lg-flex" style="margin-right: 6px;"></i>
+          <span>{{ idea.created_time.strftime('%d.%m.%Y') }}</span></div>
+          {% for tag in idea.tags %}
+          <div class="d-flex flex-wrap" style="font-size: 12px;">
+          <span class="d-flex" style="margin-right: 8px;">{{ tag.name }}<br></span>
+          </div>
+          {% endfor %}
     </div>
-    <div class="container d-flex justify-content-evenly flex-wrap">
-      {% for idea in ideas %}
-        <div class="d-flex flex-column flex-wrap dashboard-card" style="margin: 12px;max-width: 325px;">
-          <a class="dashboard-card-link" href="{{ url_for('editor', idea_id = idea.id)}}">{{ idea.name }}<br></a>
-            <div class="d-flex align-items-center" style="font-size: 12px;">
-              <span>Идея №{{ idea.id }}</span>
-              {% if idea.complete == True %}
-              <i class="fa fa-check" style="margin-right: 6px;"></i>
-              {% else %}
-              <i class="fa fa-times" style="margin-right: 6px;"></i>
-              {% endif %}
-              <span style="margin-right: 2px;">{{ idea.posts.all()|length }}</span>
-              <i class="fa fa-pencil-square-o d-lg-flex" style="margin-right: 6px;"></i>
-              <span>{{ idea.created_time.strftime('%d.%m.%Y') }}</span></div>
-              {% for tag in idea.tags %}
-              <div class="d-flex flex-wrap" style="font-size: 12px;">
-              <span class="d-flex" style="margin-right: 8px;">{{ tag.name }}<br></span>
-              </div>
-              {% endfor %}
-        </div>
-        {% endfor %}
-    </div>
-    <script src="{{ url_for('static', filename = 'bootstrap/js/bootstrap.min.js')}}"></script>
-    <script>
-      function delete_tag(tag_id, element_id) {
-        let http = new XMLHttpRequest();
-        http.open("POST", "{{ url_for('del_tag', tag_id='', _external=True) }}/" + tag_id);
-        http.setRequestHeader("Accept", "application/json");
-        http.setRequestHeader("Content-Type", "application/json");
-        http.onreadystatechange = function() {
-          if(http.readyState == 4 && http.status == 200) {
-              var el = document.getElementById(element_id + '_in_del');
-              el.remove();
-              var el = document.getElementById(element_id + '_show');
-              el.remove();
-              if (document.getElementById('tag-list').children.length == 0) {
-                parent = document.getElementById('tag-list');
-                parent_2 = document.getElementById('del-tag-list');
-
-                new_element = document.createElement("span");
-                new_element.id = 'has-no-tags';
-                new_element.classList.add('dashboard-tag');
-                new_element.innerHTML = 'У вас нет еще ни одного тега!';
-
-                second_new_element = document.createElement("span");
-                second_new_element.id = 'del-has-no-tags';
-                second_new_element.classList.add('dashboard-tag');
-                second_new_element.innerHTML = 'У вас нет еще ни одного тега!';
-
-                parent.append(new_element);
-                parent_2.append(second_new_element);
-              }
-          }
-        };
-        http.send();
-      }
-
-      function add_tag() {
-        tag_name = document.getElementById('tag-name-input').value;
-        document.getElementById('tag-name-input').value = '';
-        let http = new XMLHttpRequest();
-        http.open("POST", '{{ url_for('add_tag', tag_name = '', _external=True) }}' + tag_name);
-        http.setRequestHeader("Accept", "application/json");
-        http.setRequestHeader("Content-Type", "application/json");
-        http.onreadystatechange = function() {
-          if(http.readyState == 4 && http.status == 200) {
-            if (document.getElementById('has-no-tags') != null) {
-              document.getElementById('has-no-tags').remove();
-            };
-            if (document.getElementById('del-has-no-tags') != null) {
-              document.getElementById('del-has-no-tags').remove();
-            };
-            response = JSON.parse(http.responseText)
+    {% endfor %}
+</div>
+<script>
+  function delete_tag(tag_id, element_id) {
+    let http = new XMLHttpRequest();
+    http.open("POST", "{{ url_for('del_tag', tag_id='', _external=True) }}/" + tag_id);
+    http.setRequestHeader("Accept", "application/json");
+    http.setRequestHeader("Content-Type", "application/json");
+    http.onreadystatechange = function() {
+      if(http.readyState == 4 && http.status == 200) {
+          var el = document.getElementById(element_id + '_in_del');
+          el.remove();
+          var el = document.getElementById(element_id + '_show');
+          el.remove();
+          if (document.getElementById('tag-list').children.length == 0) {
             parent = document.getElementById('tag-list');
-            new_element = document.createElement("a");
-            new_element.id = 'tag_' + response.tag_id + '_show';
-            new_element.classList.add('dashboard-tag');
-            new_element.href = '#';
-            new_element.innerHTML = response.tag_name;
-            parent.append(new_element);
-            tag_id = String(response.tag_id).split(' ').join('')
-            let de = '<div id=tag_' + tag_id + '_in_del class="d-flex flex-row align-items-center" style="margin: 8px;">\
-                          <div>\
-                            <span style="margin-right: 8px;">' + response.tag_name + '</span>\
-                            <span>0</span>\
-                            <i class="fa fa-edit" style="margin-right: 16px;font-size: inherit;"></i>\
-                            <span>0</span>\
-                            <i class="fa fa-file-o" style="margin-right: 16px;font-size: inherit;"></i>\
-                          </div>\
-                          <div class="d-flex flex-fill justify-content-end">\
-                            <button class="form-button" type="button" onclick = "delete_tag(\''+tag_id+'\', \'tag_' + tag_id + '\')">\
-                            <i class="fa fa-remove"></i></button>\
-                          </div>\
-                        </div>';
-            parent2 = document.getElementById('del-tag-list');
-            parent2.innerHTML = parent2.innerHTML + de
-          }
-        };
-        http.send();
-      }
-    </script>
-</body>
+            parent_2 = document.getElementById('del-tag-list');
 
-</html>
+            new_element = document.createElement("span");
+            new_element.id = 'has-no-tags';
+            new_element.classList.add('dashboard-tag');
+            new_element.innerHTML = 'У вас нет еще ни одного тега!';
+
+            second_new_element = document.createElement("span");
+            second_new_element.id = 'del-has-no-tags';
+            second_new_element.classList.add('dashboard-tag');
+            second_new_element.innerHTML = 'У вас нет еще ни одного тега!';
+
+            parent.append(new_element);
+            parent_2.append(second_new_element);
+          }
+      }
+    };
+    http.send();
+  }
+  function add_tag() {
+    tag_name = document.getElementById('tag-name-input').value;
+    document.getElementById('tag-name-input').value = '';
+    let http = new XMLHttpRequest();
+    http.open("POST", '{{ url_for('add_tag', tag_name = '', _external=True) }}' + tag_name);
+    http.setRequestHeader("Accept", "application/json");
+    http.setRequestHeader("Content-Type", "application/json");
+    http.onreadystatechange = function() {
+      if(http.readyState == 4 && http.status == 200) {
+        if (document.getElementById('has-no-tags') != null) {
+          document.getElementById('has-no-tags').remove();
+        };
+        if (document.getElementById('del-has-no-tags') != null) {
+          document.getElementById('del-has-no-tags').remove();
+        };
+        response = JSON.parse(http.responseText);
+        parent = document.getElementById('tag-list');
+        new_element = document.createElement("a");
+        new_element.id = 'tag_' + response.tag_id + '_show';
+        new_element.classList.add('dashboard-tag');
+        new_element.href = '#';
+        new_element.innerHTML = response.tag_name;
+        parent.append(new_element);
+        tag_id = String(response.tag_id).split(' ').join('')
+        let de = '<div id=tag_' + tag_id + '_in_del class="d-flex flex-row align-items-center" style="margin: 8px;">\
+                      <div>\
+                        <span style="margin-right: 8px;">' + response.tag_name + '</span>\
+                        <span>0</span>\
+                        <i class="fa fa-edit" style="margin-right: 16px;font-size: inherit;"></i>\
+                        <span>0</span>\
+                        <i class="fa fa-file-o" style="margin-right: 16px;font-size: inherit;"></i>\
+                      </div>\
+                      <div class="d-flex flex-fill justify-content-end">\
+                        <button class="form-button" type="button" onclick = "delete_tag(\''+tag_id+'\', \'tag_' + tag_id + '\')">\
+                        <i class="fa fa-remove"></i></button>\
+                      </div>\
+                    </div>';
+        parent2 = document.getElementById('del-tag-list');
+        parent2.innerHTML = parent2.innerHTML + de
+      }
+    };
+    http.send();
+  }
+</script>
+{% endblock %}

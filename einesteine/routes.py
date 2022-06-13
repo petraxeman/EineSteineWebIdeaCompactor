@@ -3,9 +3,10 @@
 from einesteine import app, db
 from flask import render_template, redirect, url_for, flash, request, jsonify
 from flask_login import current_user, login_user, logout_user, login_required
+import sqlalchemy as sqla
 from werkzeug.urls import url_parse
 import einesteine.forms as forms
-from einesteine.models import User, Tag, Idea, Post
+from einesteine.models import User, Tag, Idea, Post, tag_connections
 from datetime import datetime
 
 
@@ -65,11 +66,20 @@ def delete_post(post_id):
             db.session.commit()
     return jsonify({'status' : '200'})
 
+@app.route('/delete_idea/<idea_id>', methods=['POST'])
+@login_required
+def delete_idea(idea_id):
+    idea = Idea.query.get(idea_id)
+    if idea is not None:
+        if idea.user_id == current_user.id:
+            db.session.delete(idea)
+            db.session.commit()
+    return redirect(url_for('dashboard'))
+
 @app.route('/update_idea', methods=['POST'])
 @login_required
 def update_idea():
     data = request.get_json()[0]
-    print(data)
     idea = Idea.query.get(data['idea_id'])
     if idea.user_id == current_user.id:
         idea.name = data['name']
@@ -79,7 +89,7 @@ def update_idea():
         if data['completed'] in [True, False]:
             idea.complete = data['completed']
         db.session.commit()
-    return jsonify({'status' : '200'})
+    return jsonify({'status' : '200', 'post_id' : post.id, 'created_time' : post.created_time.strftime('%d.%m.%Y %H:%M')})
 
 @app.route('/')
 @app.route('/index')
@@ -120,6 +130,29 @@ def register():
 def dashboard():
     return render_template('dashboard.html', user=current_user, ideas=current_user.ideas, tags=current_user.tags.all())
 
+@app.route('/board/filtered/<tag_name>')
+@login_required
+def dashboard_filtered_by_tag(tag_name):
+    tag = Tag.query.filter_by(name = tag_name, user_id = current_user.id).first()
+    ideas = []
+    if tag is not None:
+        ideas = tag.ideas if tag.ideas is not None else []
+    return render_template('dashboard.html', user=current_user, ideas=ideas, tags=current_user.tags.all())
+
+@app.route('/board/completed/<stage>')
+@login_required
+def dashboard_filtered_by_complete(stage):
+    ideas = []
+    if stage == '1':
+        ideas = Idea.query.filter_by(user_id = current_user.id, complete = False).all()
+    if stage == '2':
+        ideas = Idea.query.filter_by(user_id = current_user.id, complete = False).filter(Idea.posts).all()
+    if stage == '3':
+        ideas = Idea.query.filter_by(user_id = current_user.id, complete = True).all()
+    return render_template('dashboard.html', user=current_user, ideas=ideas, tags=current_user.tags.all())
+
+
+
 @app.route('/editor')
 @login_required
 def editor_empty():
@@ -133,7 +166,10 @@ def editor_empty():
 def editor(idea_id):
     idea = Idea.query.get(idea_id)
     tags = Tag.query.filter_by(user_id=current_user.id).all()
-    return render_template('editor.html', idea = idea, tags = tags)
+    if idea is not None and idea.user_id == current_user.id:
+        return render_template('editor.html', idea = idea, tags = tags)
+    else:
+        return redirect(url_for('logout'))
 
 @app.route('/profile')
 @login_required

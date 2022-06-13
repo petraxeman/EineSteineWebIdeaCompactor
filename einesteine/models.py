@@ -37,9 +37,8 @@ class Idea(db.Model):
     created_time = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     posts = db.relationship('Post', backref='idea_post', lazy='dynamic')
-    #tags = db.relationship('Tag', secondary = tag_connections,
-    #                       primaryjoin = (tag_connections.c.tagged_id == id),
-    #                       backref=db.backref('tagged_ideas', lazy='dynamic'), lazy='dynamic')
+    def length(self):
+        return len(self.posts)
     def __repr__(self):
         return f'<Idea {self.name}>'
 
