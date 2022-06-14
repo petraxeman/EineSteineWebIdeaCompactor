@@ -32,9 +32,15 @@
                     </div>
                 </div>
             </div>
+            <div id = 'tag-list'>
+              <button class="form-button" type="button" style="margin-right: 16px;" data-bs-toggle="modal" data-bs-target="#add-tag"><i class="fa fa-plus"></i></button>
+              {% for tag in idea.tags %}
+                <a id = "tag_show_{{ tag.id }}" class = "dashboard-tag" style="text-decoration: underline;" onclick="disconnect_tag({{ tag.id }})">{{ tag.name }}</a>
+              {% endfor %}
+            </div>
             <div style="margin: 8px 0px;">
               <button class="form-button" type="button" style="margin-right: 16px;" data-bs-toggle="modal" data-bs-target="#delete_idea"><i class="fa fa-trash"></i></button>
-                <div class="modal fade" role="dialog" tabindex="-1" id="delete_idea">
+              <div class="modal fade" role="dialog" tabindex="-1" id="delete_idea">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content" style="border-radius: 2rem;background-color: var(--a-color);box-shadow: 0px 5px 15px var(--ad-color);">
                             <div class="modal-header">
@@ -50,12 +56,6 @@
                     </div>
                 </div>
             </div>
-          <div id = 'tag-list'>
-            <button class="form-button" type="button" style="margin-right: 16px;" data-bs-toggle="modal" data-bs-target="#add-tag"><i class="fa fa-plus"></i></button>
-            {% for tag in idea.tags %}
-              <a id = "tag_show_{{ tag.id }}" class = "dashboard-tag" style="text-decoration: underline;" onclick="disconnect_tag({{ tag.id }})">{{ tag.name }}</a>
-            {% endfor %}
-          </div>
         </div>
     </div>
     <div id = 'posts-container'>

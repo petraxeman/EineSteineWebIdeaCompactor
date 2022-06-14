@@ -91,6 +91,17 @@ def update_idea():
         db.session.commit()
     return jsonify({'status' : '200', 'post_id' : post.id, 'created_time' : post.created_time.strftime('%d.%m.%Y %H:%M')})
 
+@app.route('/deleteme')
+@login_required
+def delete_account():
+    current_user.ideas.delete()
+    current_user.tags.ideas.all().delete()
+    current_user.tags.delete()
+    current_user.posts.delete()
+    db.session.delete(current_user)
+    db.session.commit()
+    return redirect(url_for('register'))
+
 @app.route('/')
 @app.route('/index')
 def index():
@@ -114,11 +125,12 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard'))
     form = forms.RegistrationForm()
     if form.validate_on_submit():
         user = User(username=form.username.data, email=form.email.data, register_time=datetime.now())
         user.set_password(form.password.data)
-
         db.session.add(user)
         db.session.commit()
         flash('Congratulations, you are now a registered user!')
@@ -128,7 +140,7 @@ def register():
 @app.route('/board')
 @login_required
 def dashboard():
-    return render_template('dashboard.html', user=current_user, ideas=current_user.ideas, tags=current_user.tags.all())
+    return render_template('dashboard.html', user=current_user, ideas=current_user.ideas, tags=current_user.tags.all(), tagn = False)
 
 @app.route('/board/filtered/<tag_name>')
 @login_required
@@ -137,20 +149,35 @@ def dashboard_filtered_by_tag(tag_name):
     ideas = []
     if tag is not None:
         ideas = tag.ideas if tag.ideas is not None else []
-    return render_template('dashboard.html', user=current_user, ideas=ideas, tags=current_user.tags.all())
+    return render_template('dashboard.html', user=current_user, ideas=ideas, tags=current_user.tags.all(), tagn = tag_name)
 
 @app.route('/board/completed/<stage>')
 @login_required
 def dashboard_filtered_by_complete(stage):
     ideas = []
     if stage == '1':
-        ideas = Idea.query.filter_by(user_id = current_user.id, complete = False).all()
+        ideas = Idea.query.filter_by(user_id = current_user.id, complete = False).filter(Idea.posts == None).all()
     if stage == '2':
         ideas = Idea.query.filter_by(user_id = current_user.id, complete = False).filter(Idea.posts).all()
     if stage == '3':
         ideas = Idea.query.filter_by(user_id = current_user.id, complete = True).all()
-    return render_template('dashboard.html', user=current_user, ideas=ideas, tags=current_user.tags.all())
+    return render_template('dashboard.html', user=current_user, ideas=ideas, tags=current_user.tags.all(), tagn = False)
 
+@app.route('/board/deep_filtered/<tag_name>/<stage>')
+@login_required
+def dashboard_deep_filtered(tag_name, stage):
+    tag = Tag.query.filter_by(name = tag_name, user_id = current_user.id).first()
+    if tag == None or tag.ideas == None:
+        return redirect(url_for('dashboard'))
+    if stage == '1':
+        ideas = tag.ideas.filter(not Idea.complete and Idea.posts == None).all()
+    if stage == '2':
+        ideas = tag.ideas.filter(not Idea.complete and Idea.posts).all()
+    if stage == '3':
+        ideas = tag.ideas.filter(Idea.complete).all()
+    if ideas == None:
+        return redirect(url_for('dashboard'))
+    return render_template('dashboard.html', user=current_user, ideas=ideas, tags=current_user.tags.all(), tagn = tag_name)
 
 
 @app.route('/editor')
@@ -171,7 +198,11 @@ def editor(idea_id):
     else:
         return redirect(url_for('logout'))
 
-@app.route('/profile')
+@app.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
-    return render_template('account.html', user=current_user)
+    form = forms.DeleteAccountForm()
+    if form.validate_on_submit():
+        print(1)
+        return redirect(url_for('register'))
+    return render_template('account.html', user=current_user, form=form)
