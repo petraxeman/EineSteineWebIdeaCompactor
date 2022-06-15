@@ -86,7 +86,10 @@
   function connect_tag(tag_id) {
     idea_id = {{ idea.id }}
     let http = new XMLHttpRequest();
-    http.open("POST", "{{ url_for('connect_idea_tag', tag_id='', idea_id='', _external=True) }}/" + idea_id + '/' + tag_id);
+    let url = "{{ url_for('connect_idea_tag', tag_id='tag_id_js', idea_id='idea_id_js', _external=True) }}";
+    url = url.replace('tag_id_js', tag_id);
+    url = url.replace('idea_id_js', idea_id);
+    http.open("POST", url);
     http.setRequestHeader("Accept", "application/json");
     http.setRequestHeader("Content-Type", "application/json");
     http.onreadystatechange = function() {
@@ -103,7 +106,10 @@
   function disconnect_tag(tag_id) {
     idea_id = {{ idea.id }}
     let http = new XMLHttpRequest();
-    http.open("POST", "{{ url_for('disconnect_idea_tag', tag_id='', idea_id='', _external=True) }}/" + idea_id + '/' + tag_id);
+    let url = "{{ url_for('disconnect_idea_tag', tag_id='tag_id_js', idea_id='idea_id_js', _external=True) }}";
+    url = url.replace('tag_id_js', tag_id);
+    url = url.replace('idea_id_js', idea_id);
+    http.open("POST", url);
     http.setRequestHeader("Accept", "application/json");
     http.setRequestHeader("Content-Type", "application/json");
     http.onreadystatechange = function() {
@@ -117,7 +123,9 @@
   };
   function delete_post(post_id) {
     let http = new XMLHttpRequest();
-    http.open("POST", "{{ url_for('delete_post', post_id = '', _external=True) }}/" + post_id);
+    let url = "{{ url_for('delete_post', post_id='post_id_js', _external=True) }}";
+    url = url.replace('post_id_js', post_id);
+    http.open("POST", url);
     http.setRequestHeader("Accept", "application/json");
     http.setRequestHeader("Content-Type", "application/json");
     http.onreadystatechange = function() {
@@ -130,7 +138,9 @@
   };
   function delete_idea(idea_id) {
     let http = new XMLHttpRequest();
-    http.open("POST", "{{ url_for('delete_idea', idea_id='', _external=True) }}/" + idea_id);
+    let url = "{{ url_for('delete_idea', idea_id='idea_id_js', _external=True) }}";
+    url = url.replace('idea_id_js', idea_id);
+    http.open("POST", url);
     http.setRequestHeader("Accept", "application/json");
     http.setRequestHeader("Content-Type", "application/json");
     http.onreadystatechange = function() {

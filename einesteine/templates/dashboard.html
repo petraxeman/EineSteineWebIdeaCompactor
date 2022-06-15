@@ -57,6 +57,7 @@
                     </div>
                     <div class="modal-body">
                       <input id = 'tag-name-input' type="text" placeholder="Название тега">
+                      <span>Максимум 25 символов.</span>
                     </div>
                     <div class="modal-footer">
                       <button class="form-button" type="button" data-bs-toggle="modal" data-bs-target="#add-tag-modal" onclick="add_tag()">Добавить</button>
@@ -130,7 +131,7 @@
 <script>
   function delete_tag(tag_id, element_id) {
     let http = new XMLHttpRequest();
-    http.open("POST", "{{ url_for('del_tag', tag_id='', _external=True) }}/" + tag_id);
+    http.open("POST", "{{ url_for('del_tag', tag_id = 'tag_id_js', _external=True) }}".replace('tag_id_js', tag_id));
     http.setRequestHeader("Accept", "application/json");
     http.setRequestHeader("Content-Type", "application/json");
     http.onreadystatechange = function() {
@@ -164,7 +165,7 @@
     tag_name = document.getElementById('tag-name-input').value;
     document.getElementById('tag-name-input').value = '';
     let http = new XMLHttpRequest();
-    http.open("POST", '{{ url_for('add_tag', tag_name = '', _external=True) }}' + tag_name);
+    http.open("POST", "{{ url_for('add_tag', tag_name = 'tag_name_js', _external=True) }}".replace('tag_name_js', tag_name));
     http.setRequestHeader("Accept", "application/json");
     http.setRequestHeader("Content-Type", "application/json");
     http.onreadystatechange = function() {

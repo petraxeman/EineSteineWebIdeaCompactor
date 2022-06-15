@@ -20,7 +20,7 @@ def logout():
 @app.route('/add_tag/<tag_name>', methods=['POST'])
 @login_required
 def add_tag(tag_name):
-    tag = Tag(name=tag_name, user_id=current_user.id)
+    tag = Tag(name=tag_name[:25], user_id=current_user.id)
     db.session.add(tag)
     db.session.commit()
     return jsonify({'status' : '200', 'tag_name' : tag_name, 'tag_id' : tag.id})
@@ -28,11 +28,12 @@ def add_tag(tag_name):
 @app.route('/del_tag/<tag_id>', methods=['POST'])
 @login_required
 def del_tag(tag_id):
-    tag = Tag.query.get(tag_id)
-    if tag.user_id == current_user.id:
+    tag = Tag.query.filter_by(id = tag_id, user_id = current_user.id).first()
+    if tag:
         db.session.delete(tag)
         db.session.commit()
-    return '200'
+        return '200'
+    else: return '500'
 
 @app.route('/connect/<idea_id>/<tag_id>', methods=['POST'])
 @login_required
