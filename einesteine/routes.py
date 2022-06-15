@@ -96,7 +96,6 @@ def update_idea():
 @login_required
 def delete_account():
     current_user.ideas.delete()
-    current_user.tags.ideas.all().delete()
     current_user.tags.delete()
     current_user.posts.delete()
     db.session.delete(current_user)
@@ -184,7 +183,9 @@ def dashboard_deep_filtered(tag_name, stage):
 @app.route('/editor')
 @login_required
 def editor_empty():
-    idea = Idea(name = 'Моя шикарная идея', created_time = datetime.now(), user_id = current_user.id, complete = False, number = 0)
+    number = current_user.last_idea_id
+    idea = Idea(name = 'Моя шикарная идея', created_time = datetime.now(), user_id = current_user.id, number = number)
+    current_user.last_idea_id += 1
     db.session.add(idea)
     db.session.commit()
     return redirect(url_for('editor', idea_id = idea.id))

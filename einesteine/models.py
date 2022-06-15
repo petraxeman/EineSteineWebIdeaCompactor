@@ -19,6 +19,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     register_time = db.Column(db.DateTime)
+    last_idea_id = db.Column(db.Integer, default=1)
     ideas = db.relationship('Idea', backref='idea_author', lazy='dynamic')
     posts = db.relationship('Post', backref='post_author', lazy='dynamic')
     tags = db.relationship('Tag', backref='tag_author', lazy='dynamic')
@@ -33,7 +34,7 @@ class Idea(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(140))
     number = db.Column(db.Integer)
-    complete = db.Column(db.Boolean())
+    complete = db.Column(db.Boolean(), default=False)
     created_time = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     posts = db.relationship('Post', backref='idea_post', lazy='dynamic')
@@ -54,7 +55,7 @@ class Post(db.Model):
 
 class Tag(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(140))
+    name = db.Column(db.String(25))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     ideas = db.relationship('Idea', secondary = tag_connections,
                             secondaryjoin = (tag_connections.c.tagged_id == Idea.id),

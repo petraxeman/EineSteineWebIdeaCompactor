@@ -111,7 +111,7 @@
     <div class="d-flex flex-column flex-wrap dashboard-card" style="margin: 12px;max-width: 325px;">
       <a class="dashboard-card-link" href="{{ url_for('editor', idea_id = idea.id)}}">{{ idea.name }}<br></a>
         <div class="d-flex align-items-center" style="font-size: 12px;">
-          <span>Идея №{{ idea.id }}</span>
+          <span>Идея №{{ idea.number }}</span>
           {% if idea.complete == True %}
           <i class="fa fa-check" style="margin-right: 6px;"></i>
           {% else %}
