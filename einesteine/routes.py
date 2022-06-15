@@ -140,7 +140,8 @@ def register():
 @app.route('/board')
 @login_required
 def dashboard():
-    return render_template('dashboard.html', user=current_user, ideas=current_user.ideas, tags=current_user.tags.all(), tagn = False)
+    ideas = current_user.ideas.paginate(1, 50, False).items if current_user.ideas != None else None
+    return render_template('dashboard.html', user=current_user, ideas=ideas, tags=current_user.tags.all(), tag_name='none', stage='none')
 
 @app.route('/board/filtered/<tag_name>')
 @login_required
@@ -149,7 +150,8 @@ def dashboard_filtered_by_tag(tag_name):
     ideas = []
     if tag is not None:
         ideas = tag.ideas if tag.ideas is not None else []
-    return render_template('dashboard.html', user=current_user, ideas=ideas, tags=current_user.tags.all(), tagn = tag_name)
+        ideas = ideas.paginate(1, 50, False).items if ideas != None else None
+    return render_template('dashboard.html', user=current_user, ideas=ideas, tags=current_user.tags.all(), stage='none', tag_name=tag_name)
 
 @app.route('/board/completed/<stage>')
 @login_required
@@ -161,7 +163,8 @@ def dashboard_filtered_by_complete(stage):
         ideas = Idea.query.filter_by(user_id = current_user.id, complete = False).filter(Idea.posts).all()
     if stage == '3':
         ideas = Idea.query.filter_by(user_id = current_user.id, complete = True).all()
-    return render_template('dashboard.html', user=current_user, ideas=ideas, tags=current_user.tags.all(), tagn = False)
+    ideas = ideas.paginate(1, 50, False).items if ideas != None else None
+    return render_template('dashboard.html', user=current_user, ideas=ideas, tags=current_user.tags.all(), tagn = False, stage=stage, tag_name='none')
 
 @app.route('/board/deep_filtered/<tag_name>/<stage>')
 @login_required
@@ -177,8 +180,39 @@ def dashboard_deep_filtered(tag_name, stage):
         ideas = tag.ideas.filter(Idea.complete).all()
     if ideas == None:
         return redirect(url_for('dashboard'))
-    return render_template('dashboard.html', user=current_user, ideas=ideas, tags=current_user.tags.all(), tagn = tag_name)
+    ideas = ideas.paginate(1, 50, False) if ideas != None else None
+    return render_template('dashboard.html', user=current_user, ideas=ideas, tags=current_user.tags.all(), stage=stage, tag_name=tag_name)
 
+@app.route('/get_ideas/<tag_name>/<stage>', methods=['POST'])
+@login_required
+def get_ideas_page(tag_name, stage):
+    data = request.get_json()[0]
+    if tag_name != 'none':
+        tag = Tag.query.filter_by(name = tag_name, user_id = current_user.id).first()
+        if tag != None or tag.ideas != None:
+            ideas = tag.ideas
+        else:
+            ideas = current_user.ideas
+    else:
+        ideas = current_user.ideas
+
+    if stage != 'none':
+        if stage == '1':
+            ideas = ideas.filter(not Idea.complete and Idea.posts == None).all()
+        if stage == '2':
+            ideas = ideas.filter(not Idea.complete and Idea.posts).all()
+        if stage == '3':
+            ideas = ideas.filter(Idea.complete).all()
+
+    if ideas == None:
+        return jsonify({'status' : 200, 'ideas' : None, 'have_new' : False})
+    ideas = ideas.paginate(int(data['next_page']), 50, False).items
+    ideas = [{'id' : idea.id,
+              'name' : idea.name,
+              'number' : idea.number,
+              'complete' : idea.complete,
+              'created_time' : idea.created_time.strftime('%d.%m.%Y')} for idea in ideas]
+    return jsonify({'status' : 200, 'ideas' : ideas, 'have_new' : True})
 
 @app.route('/editor')
 @login_required

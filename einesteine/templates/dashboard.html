@@ -19,7 +19,7 @@
           <a class="d-lg-flex align-items-center" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;" data-bs-toggle="modal" data-bs-target="#del-tag-modal" type="button">Удалить тег</a>
           <i class="fa fa-tag d-lg-flex dashboard-maintag-ico"></i>
         </div>
-        {% if tagn == False %}
+        {% if tag_name == False %}
         <div class="d-flex align-items-center dashboard-maintag">
           <a class="d-lg-flex align-items-center" href="{{ url_for('dashboard_filtered_by_complete', stage = '3') }}" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;">Закрытые</a>
           <i class="fa fa-check d-lg-flex dashboard-maintag-ico">
@@ -35,16 +35,16 @@
         </div>
         {% else %}
         <div class="d-flex align-items-center dashboard-maintag">
-          <a class="d-lg-flex align-items-center" href="{{ url_for('dashboard_deep_filtered', tag_name = tagn, stage = '3') }}" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;">Закрытые</a>
+          <a class="d-lg-flex align-items-center" href="{{ url_for('dashboard_deep_filtered', tag_name = tag_name, stage = '3') }}" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;">Закрытые</a>
           <i class="fa fa-check d-lg-flex dashboard-maintag-ico">
           </i>
         </div>
         <div class="d-flex align-items-center dashboard-maintag">
-          <a class="d-lg-flex align-items-center" href="{{ url_for('dashboard_deep_filtered', tag_name = tagn, stage = '2') }}" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;">Частично</a>
+          <a class="d-lg-flex align-items-center" href="{{ url_for('dashboard_deep_filtered', tag_name = tag_name, stage = '2') }}" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;">Частично</a>
           <i class="fa fa-clock-o d-lg-flex dashboard-maintag-ico"></i>
         </div>
         <div class="d-flex align-items-center dashboard-maintag">
-          <a class="d-lg-flex align-items-center" href="{{ url_for('dashboard_deep_filtered', tag_name = tagn, stage = '1') }}" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;">Не закрытые</a>
+          <a class="d-lg-flex align-items-center" href="{{ url_for('dashboard_deep_filtered', tag_name = tag_name, stage = '1') }}" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;">Не закрытые</a>
           <i class="fa fa-close d-lg-flex dashboard-maintag-ico"></i>
         </div>
         {% endif %}
@@ -204,5 +204,45 @@
     };
     http.send();
   }
+  async function fetch_posts() {
+    let http = new XMLHttpRequest();
+    http.open("POST", "{{ url_for('get_ideas_page', tag_name=tag_name, stage=stage, _external=True) }}");
+    http.setRequestHeader("Accept", "application/json");
+    http.setRequestHeader("Content-Type", "application/json");
+    http.onreadystatechange = function() {
+      if(http.readyState == 4 && http.status == 200) {
+        response = JSON.parse(http.responseText);
+        console.log(response.ideas);
+      }
+    data = [{'next_page' : 1}]
+    http.send(JSON.stringify(data))
+    //const { posts, next } = await server.posts(nextPage)
+    }
+  }
+  function checkPosition() {
+    const height = document.body.offsetHeight;
+    const screenHeight = window.innerHeight;
+    const scrolled = window.scrollY;
+    const threshold = height - screenHeight / 4;
+    const position = scrolled + screenHeight;
+    if (position >= threshold) {
+      await fetch_posts();
+    }
+  }
+  function throttle(callee, timeout) {
+  let timer = null;
+  return function perform() {
+      if (timer) return
+      timer = setTimeout(() => {
+        callee()
+        clearTimeout(timer)
+        timer = null
+      }, timeout)
+    }
+  };(() => {
+    window.addEventListener("scroll", throttle(checkPosition, 250))
+    window.addEventListener("resize", throttle(checkPosition, 250))
+  })()
+  function appendPost(postData) {}
 </script>
 {% endblock %}
