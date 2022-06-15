@@ -57,8 +57,8 @@ class Tag(db.Model):
     name = db.Column(db.String(140))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     ideas = db.relationship('Idea', secondary = tag_connections,
-                            secondaryjoin = (tag_connections.c.tag_id == id),
-                            primaryjoin = (tag_connections.c.tagged_id == Idea.id),
+                            secondaryjoin = (tag_connections.c.tagged_id == Idea.id),
+                            primaryjoin = (tag_connections.c.tag_id == id),
                             backref=db.backref('tags', lazy='dynamic'), lazy='dynamic')
     def __repr__(self):
         return f'<Tag {self.name}>'
