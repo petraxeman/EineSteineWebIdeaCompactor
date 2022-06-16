@@ -161,8 +161,10 @@
                           <span style="margin-bottom: 8px;">' + response.created_time + '</span><span class = "text-break" style="margin: 8px 0px;">' + text + '</span><div>\
                               <button class="form-button" type="button" style="margin-top: 8px;" onclick = "delete_post(' + response.post_id + ')">Удалить</button>\
                             </div></div>';
+        if (response.post_id != false && response.created_time != false) {
         var element = document.getElementById('posts-container');
         element.innerHTML = element.innerHTML + post_code;
+      }
     }};
     let currdt = new Date();
     let string_date = currdt.getDate()+'.'+(currdt.getMonth()+1)+'.'+currdt.getFullYear()+' '+currdt.getHours()+':'+currdt.getMinutes();

@@ -19,35 +19,19 @@
           <a class="d-lg-flex align-items-center" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;" data-bs-toggle="modal" data-bs-target="#del-tag-modal" type="button">Удалить тег</a>
           <i class="fa fa-tag d-lg-flex dashboard-maintag-ico"></i>
         </div>
-        {% if tag_name == False %}
         <div class="d-flex align-items-center dashboard-maintag">
-          <a class="d-lg-flex align-items-center" href="{{ url_for('dashboard_filtered_by_complete', stage = '3') }}" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;">Закрытые</a>
+          <a class="d-lg-flex align-items-center" href="{{ url_for('dashboard_filtered', tag_name = tag_name, stage = '3') }}" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;">Закрытые</a>
           <i class="fa fa-check d-lg-flex dashboard-maintag-ico">
           </i>
         </div>
         <div class="d-flex align-items-center dashboard-maintag">
-          <a class="d-lg-flex align-items-center" href="{{ url_for('dashboard_filtered_by_complete', stage = '2') }}" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;">Частично</a>
+          <a class="d-lg-flex align-items-center" href="{{ url_for('dashboard_filtered', tag_name = tag_name, stage = '2') }}" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;">Частично</a>
           <i class="fa fa-clock-o d-lg-flex dashboard-maintag-ico"></i>
         </div>
         <div class="d-flex align-items-center dashboard-maintag">
-          <a class="d-lg-flex align-items-center" href="{{ url_for('dashboard_filtered_by_complete', stage = '1') }}" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;">Не закрытые</a>
+          <a class="d-lg-flex align-items-center" href="{{ url_for('dashboard_filtered', tag_name = tag_name, stage = '1') }}" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;">Не закрытые</a>
           <i class="fa fa-close d-lg-flex dashboard-maintag-ico"></i>
         </div>
-        {% else %}
-        <div class="d-flex align-items-center dashboard-maintag">
-          <a class="d-lg-flex align-items-center" href="{{ url_for('dashboard_deep_filtered', tag_name = tag_name, stage = '3') }}" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;">Закрытые</a>
-          <i class="fa fa-check d-lg-flex dashboard-maintag-ico">
-          </i>
-        </div>
-        <div class="d-flex align-items-center dashboard-maintag">
-          <a class="d-lg-flex align-items-center" href="{{ url_for('dashboard_deep_filtered', tag_name = tag_name, stage = '2') }}" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;">Частично</a>
-          <i class="fa fa-clock-o d-lg-flex dashboard-maintag-ico"></i>
-        </div>
-        <div class="d-flex align-items-center dashboard-maintag">
-          <a class="d-lg-flex align-items-center" href="{{ url_for('dashboard_deep_filtered', tag_name = tag_name, stage = '1') }}" style="font-family: inherit;font-size: inherit;color: inherit;margin-right: 4px;">Не закрытые</a>
-          <i class="fa fa-close d-lg-flex dashboard-maintag-ico"></i>
-        </div>
-        {% endif %}
         <div class="modal fade" role="dialog" tabindex="-1" id="add-tag-modal">
             <div class="modal-dialog" role="document">
                 <div class="modal-content" style="border-radius: 2rem;background-color: var(--a-color);box-shadow: 0px 5px 15px var(--ad-color);">
@@ -99,14 +83,14 @@
     <div id = 'tag-list' class="d-flex align-items-center flex-wrap dashboard-card" style="margin: 0px 0px 16px 0px;">
       {% if tags|length > 0 %}
       {% for tag in tags %}
-        <a id='tag_{{ tag.id }}_show' class="dashboard-tag" href="{{ url_for('dashboard_filtered_by_tag', tag_name = tag.name) }}"> {{ tag.name }}</a>
+        <a id='tag_{{ tag.id }}_show' class="dashboard-tag" href="{{ url_for('dashboard_filtered', tag_name = tag.name, stage = 'none') }}"> {{ tag.name }}</a>
       {% endfor %}
       {% else %}
         <span id = 'has-no-tags' class="dashboard-tag" >У вас нет еще ни одного тега!</span>
       {% endif %}
     </div>
 </div>
-<div class="container d-flex justify-content-evenly flex-wrap">
+<div id = 'idea-list' class="container d-flex justify-content-evenly flex-wrap">
   {% for idea in ideas %}
     <div class="d-flex flex-column flex-wrap dashboard-card" style="margin: 12px;max-width: 325px;">
       <a class="dashboard-card-link" href="{{ url_for('editor', idea_id = idea.id)}}">{{ idea.name }}<br></a>
@@ -119,7 +103,8 @@
           {% endif %}
           <span style="margin-right: 2px;">{{ idea.posts.all()|length }}</span>
           <i class="fa fa-pencil-square-o d-lg-flex" style="margin-right: 6px;"></i>
-          <span>{{ idea.created_time.strftime('%d.%m.%Y') }}</span></div>
+          <span>{{ idea.created_time.strftime('%d.%m.%Y') }}</span>
+        </div>
           {% for tag in idea.tags %}
           <div class="d-flex flex-wrap" style="font-size: 12px;">
           <span class="d-flex" style="margin-right: 8px;">{{ tag.name }}<br></span>
@@ -129,6 +114,8 @@
     {% endfor %}
 </div>
 <script>
+  let next_page = 2;
+  var should_load = true;
   function delete_tag(tag_id, element_id) {
     let http = new XMLHttpRequest();
     http.open("POST", "{{ url_for('del_tag', tag_id = 'tag_id_js', _external=True) }}".replace('tag_id_js', tag_id));
@@ -212,37 +199,79 @@
     http.onreadystatechange = function() {
       if(http.readyState == 4 && http.status == 200) {
         response = JSON.parse(http.responseText);
-        console.log(response.ideas);
-      }
-    data = [{'next_page' : 1}]
-    http.send(JSON.stringify(data))
-    //const { posts, next } = await server.posts(nextPage)
+        console.log(response.have_new);
+        if (response.have_new) {
+          for (let idea of response.ideas) {
+            append_post(idea);
+          }
+          next_page = next_page + 1;
+        } else if (response.have_new == false) {should_load = false};}}
+      data = [{'next_page' : next_page}];
+      http.send(JSON.stringify(data));
     }
-  }
-  function checkPosition() {
+  function check_position() {
     const height = document.body.offsetHeight;
     const screenHeight = window.innerHeight;
     const scrolled = window.scrollY;
     const threshold = height - screenHeight / 4;
     const position = scrolled + screenHeight;
     if (position >= threshold) {
-      await fetch_posts();
-    }
-  }
+      if (should_load){
+        fetch_posts();
+    };};
+  };
   function throttle(callee, timeout) {
   let timer = null;
   return function perform() {
       if (timer) return
       timer = setTimeout(() => {
-        callee()
-        clearTimeout(timer)
-        timer = null
+        callee();
+        clearTimeout(timer);
+        timer = null;
       }, timeout)
-    }
+    };
   };(() => {
-    window.addEventListener("scroll", throttle(checkPosition, 250))
-    window.addEventListener("resize", throttle(checkPosition, 250))
-  })()
-  function appendPost(postData) {}
+    window.addEventListener("scroll", throttle(check_position, 250));
+    window.addEventListener("resize", throttle(check_position, 250));
+  })();
+  function append_post(post_data) {
+    let parrent = document.getElementById('idea-list');
+    parrent.append(compose_post(post_data));
+  };
+  function compose_post(post_data) {
+    // response_url response_name response_number
+    let html = '<div class="d-flex flex-column flex-wrap dashboard-card" style="margin: 12px;max-width: 325px;">\
+                  <a class="dashboard-card-link" href="response_url">response_name<br></a>\
+                  <div class="d-flex align-items-center" style="font-size: 12px;">\
+                    <span>Идея №response_number</span>\
+                    complete_tag\
+                    <span style="margin-right: 2px;">response_posts_count</span>\
+                    <i class="fa fa-pencil-square-o d-lg-flex" style="margin-right: 6px;"></i>\
+                    <span>response_created_time</span>\
+                  </div>\
+                    response_tags\
+                  </div>';
+    const completed = '<i class="fa fa-check" style="margin-right: 6px;"></i>';
+    const not_completed = '<i class="fa fa-times" style="margin-right: 6px;"></i>';
+    let tags = ''
+    let tag_tamplate = '<div class="d-flex flex-wrap" style="font-size: 12px;">\
+                        <span class="d-flex" style="margin-right: 8px;">response_tag_name<br></span>\
+                        </div>';
+    for (let tag of post_data.tags) {
+      tags = tags + tag_tamplate.replace('response_tag_name', tag);
+    }
+    html = html.replace('response_url', post_data.url);
+    html = html.replace('response_name', post_data.name);
+    html = html.replace('response_number', post_data.number);
+    html = html.replace('response_posts_count', post_data.posts_count);
+    html = html.replace('response_created_time', post_data.created_time);
+    html = html.replace('response_tags', tags)
+
+    if (response.complete) {html = html.replace('complete_tag', completed);} else {html = html.replace('complete_tag', not_completed);};
+    let temp = document.createElement('tmp');
+    temp.innerHTML = html;
+    return temp;
+    return html;
+  };
 </script>
 {% endblock %}
